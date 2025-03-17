@@ -7,22 +7,19 @@ services:
     platform: linux/amd64
     container_name: zhixuanche_mysql
     restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: zhixuanche123
-      MYSQL_DATABASE: zhixuanche
-      MYSQL_USER: zhixuanche_user
-      MYSQL_PASSWORD: zhixuanche_pass
-      TZ: Asia/Shanghai
-      MYSQL_ROOT_HOST: '%'
-      LANG: C.UTF-8
-      MYSQL_CHARSET: utf8mb4
-      MYSQL_COLLATION: utf8mb4_unicode_ci
     ports:
-      - "3307:3306"
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: zhixuanche
+      MYSQL_USER: zhixuanche
+      MYSQL_PASSWORD: zhixuanche123
     volumes:
       - ./database/mysql/data:/var/lib/mysql
-      - ./database/mysql/init:/docker-entrypoint-initdb.d
-      - ./database/mysql/conf.d:/etc/mysql/conf.d
+      - ./database/mysql/init/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      - ./database/mysql/init/seed:/docker-entrypoint-initdb.d/seed
+      - ./database/mysql/init/setup.sh:/docker-entrypoint-initdb.d/setup.sh
+      - ./database/mysql/conf:/etc/mysql/conf.d
     command: >
       --character-set-server=utf8mb4
       --collation-server=utf8mb4_unicode_ci
@@ -71,7 +68,7 @@ services:
       dockerfile: docker/Dockerfile
     container_name: zhixuanche_frontend
     ports:
-      - "80:80"
+      - "8050:80"
     restart: unless-stopped
     # 使用代理设置
     environment:

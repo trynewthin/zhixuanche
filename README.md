@@ -115,6 +115,7 @@ docker-compose down
 - **数据库名**：zhixuanche
 - **用户名**：zhixuanche_user
 - **密码**：zhixuanche_pass
+- **管理员密码**： rootpassword
 - **端口**：3307 (宿主机) -> 3306 (容器内)
 
 ## 资源说明
