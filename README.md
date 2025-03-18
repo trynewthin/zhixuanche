@@ -8,7 +8,8 @@
 
 本仓库为主仓库，仅包含Docker配置和共享资源。前端和后端代码各自维护单独的Git仓库：
 
-- 前端仓库: `frontendv1/` 目录下维护单独的Git仓库
+- 前端仓库: `frontendv1/` 目录下维护单独的Git仓库，https://gitee.com/anzelin/frontendv1。
+
 - 后端仓库: `bankend/` 目录下维护单独的Git仓库
 - 主仓库: 根目录，专注于容器配置和环境管理
 
@@ -52,7 +53,7 @@ zhixuanche/
 
 系统各服务使用以下端口：
 
-- **前端服务**：80端口 (http://localhost)
+- **前端服务**：8050端口 (http://localhost)
 - **后端API服务**：8080端口 (http://localhost:8080/api)
 - **资源服务器**：8090端口 (http://localhost:8090)
 - **数据库服务**：3307端口 (映射到容器内3306端口)
