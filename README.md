@@ -15,6 +15,8 @@
 
 这种分离式结构允许各部分独立开发和版本控制，同时又能通过主仓库整体配置和部署。
 
+注意可能需要启用了host networking才可以正常工作！
+
 ## 系统架构
 
 智选车系统采用前后端分离架构，包含以下主要组件：
@@ -144,3 +146,101 @@ docker-compose up -d
 2. 首次启动时，数据库初始化可能需要一些时间
 3. 如果修改了配置文件，需要重新构建并启动容器
 4. 前端构建生成的静态文件会存储在容器内，每次修改前端代码后需要重新构建 
+
+以下是完全删除所有Docker容器和相关资源，从零开始排查的步骤：
+
+### 1. 停止并删除所有容器
+
+```bash
+# 停止所有正在运行的容器
+docker stop $(docker ps -aq)
+
+# 删除所有容器
+docker rm $(docker ps -aq)
+```
+
+### 2. 删除所有卷（这会删除所有数据！）
+
+```bash
+# 删除所有卷
+docker volume rm $(docker volume ls -q)
+```
+
+### 3. 删除所有网络（除了默认网络）
+
+```bash
+# 删除自定义网络
+docker network rm $(docker network ls -q -f "type=custom")
+```
+
+### 4. 删除所有镜像（可选）
+
+```bash
+# 删除所有镜像
+docker rmi $(docker images -q)
+```
+
+### 5. 清理项目数据卷
+
+```bash
+# 进入项目目录
+cd /path/to/your/project
+
+# 删除MySQL数据目录
+rm -rf ./database/mysql/data/*
+```
+
+### 6. 重新构建并启动项目
+
+```bash
+# 确保在项目根目录
+docker-compose build --no-cache
+docker-compose up -d
+```
+
+### 7. 验证项目启动状态
+
+```bash
+# 查看容器运行状态
+docker-compose ps
+
+# 查看容器日志
+docker-compose logs -f
+```
+
+### 8. 检查MySQL初始化
+
+```bash
+# 等待MySQL完全启动后，检查初始化状态
+docker exec -it zhixuanche_mysql bash -c "mysql -uroot -prootpassword -e 'SHOW DATABASES; SELECT user,host FROM mysql.user;'"
+```
+
+### 9. 检查网络配置
+
+```bash
+# 查看网络配置
+docker network ls
+docker network inspect zhixuanche_net
+```
+
+### 10. 确保MySQL在后端应用之前完全启动
+
+如果MySQL启动很慢，可以手动按顺序启动各个服务：
+
+```bash
+docker-compose up -d mysql
+# 等待1分钟确保MySQL完全初始化
+sleep 60
+docker-compose up -d resource-server
+docker-compose up -d backend
+docker-compose up -d frontend
+```
+
+### 11. 检查前端环境变量配置
+
+确保前端的资源URL使用相对路径或能够从外部访问的地址，修改`.env.production`：
+
+```
+# 修改为相对路径
+VITE_API_IMAGE_URL=/resources
+
