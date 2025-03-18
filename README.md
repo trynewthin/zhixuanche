@@ -80,6 +80,16 @@ docker-compose up -d --build
 docker-compose down
 ```
 
+### 移除数据库
+
+```bash
+docker-compose down
+
+sudo rm -rf ./database/mysql/data/*
+
+docker-compose up -d
+```
+
 ## 容器配置说明
 
 ### 前端容器 (zhixuanche_frontend)
